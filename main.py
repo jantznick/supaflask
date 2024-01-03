@@ -25,6 +25,10 @@ def get_user_data(f):
         return f(supabase_user.user, *args, **kwargs)
     return decorated_function
 
+def get_extra_user_data(id):
+    response = supabase.table('users').select("*").eq('id', id).execute()
+    return response
+
 @app.route('/login', methods=['GET'])
 def login():
     return render_template('login.html')
@@ -49,7 +53,8 @@ def supabase_logout():
 @app.route('/user_profile', methods=['GET'])
 @get_user_data
 def user_profile(supabase_user):
-    print(supabase_user)
+    print(supabase_user.id)
+    print(get_extra_user_data(supabase_user.id))
     return render_template('user_profile.html', email=supabase_user.email, metadata=supabase_user.user_metadata)
 
 if __name__ == '__main__':
